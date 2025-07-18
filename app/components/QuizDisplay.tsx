@@ -13,6 +13,7 @@ export default function QuizDisplay({ questions, onRestart }: QuizDisplayProps) 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [showExplanation, setShowExplanation] = useState(false);
+  const [showResults, setShowResults] = useState(false);
   const [userAnswers, setUserAnswers] = useState<(number | null)[]>(
     new Array(questions.length).fill(null)
   );
@@ -43,6 +44,8 @@ export default function QuizDisplay({ questions, onRestart }: QuizDisplayProps) 
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setSelectedOption(userAnswers[currentQuestionIndex + 1]);
       setShowExplanation(userAnswers[currentQuestionIndex + 1] !== null);
+    } else {
+      setShowResults(true);
     }
   };
 
@@ -54,6 +57,123 @@ export default function QuizDisplay({ questions, onRestart }: QuizDisplayProps) 
       return score || 0;
     }, 0);
   };
+
+  const getAccuracy = () => {
+    const score = getScore() || 0;
+    return Math.round((score / questions.length) * 100);
+  };
+
+  const handleRetryQuiz = () => {
+    setCurrentQuestionIndex(0);
+    setSelectedOption(null);
+    setShowExplanation(false);
+    setShowResults(false);
+    setUserAnswers(new Array(questions.length).fill(null));
+  };
+
+  const handleShareQuiz = () => {
+    const score = getScore();
+    const accuracy = getAccuracy();
+    const shareText = `🎯 I just scored ${score}/${questions.length} (${accuracy}%) on a QuizzDrop quiz! Try it yourself: ${window.location.origin}`;
+    
+    if (navigator.share) {
+      navigator.share({
+        title: 'QuizzDrop Quiz Results',
+        text: shareText,
+        url: window.location.origin,
+      });
+    } else {
+      navigator.clipboard.writeText(shareText).then(() => {
+        alert('Quiz results copied to clipboard!');
+      });
+    }
+  };
+
+  if (showResults) {
+    const score = getScore();
+    const accuracy = getAccuracy();
+    
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-200 via-purple-100 to-purple-200">
+        <nav className="w-full bg-white/10 backdrop-blur-md border-b border-white/20 sticky top-0 z-50">
+          <div className="max-w-6xl mx-auto px-4 py-2 flex justify-between items-center">
+            <div className="text-gray-900 px-4 py-2 cursor-pointer" onClick={onRestart}>
+              <span className="text-lg font-bold">QuizzDrop</span>
+            </div>
+            <a 
+              href="https://github.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              aria-label="GitHub Repository"
+              title="View on GitHub"
+              className="text-white p-2"
+            >
+              <FaGithub className="w-5 h-5" />
+            </a>
+          </div>
+        </nav>
+
+        <main className="flex flex-col items-center justify-center px-4 py-8 min-h-[calc(100vh-60px)]">
+          <div className="max-w-2xl w-full text-center space-y-8">
+            
+            <div className="bg-white/20 backdrop-blur-md rounded-3xl border border-white/30 shadow-xl p-8">
+              <h1 className="text-4xl font-bold text-gray-900 mb-6">Quiz Complete! 🎉</h1>
+              
+              <div className="bg-white/40 rounded-2xl p-6 mb-6">
+                <div className="text-6xl font-bold text-purple-600 mb-2">
+                  {score}/{questions.length}
+                </div>
+                <p className="text-xl text-gray-700">
+                  You answered {score} correctly out of {questions.length}
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-white/20 backdrop-blur-md rounded-3xl border border-white/30 shadow-xl p-6">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">Stats</h2>
+              <div className="bg-white/40 rounded-xl p-4">
+                <div className="text-3xl font-bold text-green-600">
+                  Accuracy {accuracy}%
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button
+                onClick={onRestart}
+                className="px-8 py-3 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg transform hover:-translate-y-1 hover:shadow-xl"
+              >
+                New Quiz
+              </button>
+              
+              <button
+                onClick={handleRetryQuiz}
+                className="px-8 py-3 bg-gradient-to-r from-orange-400 to-red-500 hover:from-orange-500 hover:to-red-600 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg transform hover:-translate-y-1 hover:shadow-xl"
+              >
+                Retry Quiz
+              </button>
+              
+              <button
+                onClick={handleShareQuiz}
+                className="px-8 py-3 bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg transform hover:-translate-y-1 hover:shadow-xl"
+              >
+                Share Quiz
+              </button>
+            </div>
+
+            <div className="bg-white/10 rounded-xl p-4">
+              <p className="text-gray-700 italic">
+                {accuracy >= 90 ? "🌟 Excellent work! You're a quiz master!" :
+                 accuracy >= 70 ? "👍 Great job! You have a solid understanding!" :
+                 accuracy >= 50 ? "📚 Good effort! Keep studying and you'll improve!" :
+                 "💪 Don't give up! Practice makes perfect!"}
+              </p>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-200 via-purple-100 to-purple-200">
@@ -157,7 +277,7 @@ export default function QuizDisplay({ questions, onRestart }: QuizDisplayProps) 
             </div>
 
             <button
-              onClick={currentQuestionIndex === questions.length - 1 ? onRestart : handleContinue}
+              onClick={handleContinue}
               disabled={!showExplanation}
               className={`px-8 py-3 rounded-xl font-semibold transition-all duration-300 ${
                 !showExplanation
@@ -165,7 +285,7 @@ export default function QuizDisplay({ questions, onRestart }: QuizDisplayProps) 
                   : 'bg-blue-500 hover:bg-blue-600 text-white hover:shadow-lg transform hover:-translate-y-1'
               }`}
             >
-              {currentQuestionIndex === questions.length - 1 ? 'Restart' : 'Continue'}
+              {currentQuestionIndex === questions.length - 1 ? 'View Results' : 'Continue'}
             </button>
           </div>
         </div>

@@ -29,7 +29,16 @@ export default function Home() {
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[] | null>(null);
   const [currentStep, setCurrentStep] = useState<'upload' | 'quiz'>('upload');
   const [topic, setTopic] = useState<string>('');
+  const [questionCount, setQuestionCount] = useState<number>(10);
+  const [suggestedQuestionCount, setSuggestedQuestionCount] = useState<number>(10);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const calculateSuggestedQuestions = (textLength: number, pageCount: number): number => {
+    const textBasedQuestions = Math.floor(textLength / 1200);
+    const pageBasedQuestions = Math.ceil(pageCount * 2.5);
+    const suggested = Math.max(textBasedQuestions, pageBasedQuestions);
+    return Math.min(Math.max(suggested, 5), 50);
+  };
 
   const showErrorToast = () => {
     setToastMessage('Please upload a PDF file only');
@@ -64,6 +73,7 @@ export default function Home() {
       const file = e.dataTransfer.files[0];
       if (file.type === "application/pdf") {
         setUploadedFile(file);
+        analyzeFileAndSetSuggestions(file);
       } else {
         showErrorToast();
       }
@@ -75,13 +85,30 @@ export default function Home() {
       const file = e.target.files[0];
       if (file.type === "application/pdf") {
         setUploadedFile(file);
+        analyzeFileAndSetSuggestions(file);
       } else {
         showErrorToast();
       }
     }
   };
 
-  const extractTextFromPDF = async (file: File): Promise<string> => {
+  const analyzeFileAndSetSuggestions = async (file: File) => {
+    try {
+      const extractedData = await extractTextFromPDF(file);
+      const { text, pageCount } = extractedData;
+      const suggested = calculateSuggestedQuestions(text.length, pageCount);
+      setSuggestedQuestionCount(suggested);
+      setQuestionCount(suggested);
+      
+      console.log(`File analysis: ${text.length} chars, ${pageCount} pages → suggesting ${suggested} questions`);
+    } catch (error) {
+      console.log('Could not analyze file for suggestions, using default');
+      setSuggestedQuestionCount(10);
+      setQuestionCount(10);
+    }
+  };
+
+  const extractTextFromPDF = async (file: File): Promise<{text: string, pageCount: number}> => {
     try {
       const pdfLib = await setupPDFWorker();
 
@@ -124,7 +151,7 @@ export default function Home() {
         throw new Error('No readable text found in PDF. The PDF might be image-based or corrupted.');
       }
 
-      return fullText.trim();
+      return { text: fullText.trim(), pageCount: pdf.numPages };
     } catch (error) {
       console.error('Error extracting text from PDF:', error);
       
@@ -149,7 +176,8 @@ export default function Home() {
       try {
         setQuizQuestions(null);
         
-        const extractedText = await extractTextFromPDF(uploadedFile);
+        const extractedData = await extractTextFromPDF(uploadedFile);
+        const { text: extractedText, pageCount } = extractedData;
         
         if (extractedText.length < 100) {
           throw new Error('The PDF content is too short to generate meaningful questions. Please upload a document with more text content.');
@@ -158,7 +186,7 @@ export default function Home() {
         const requestId = Date.now();
         console.log(`Generating quiz with ID: ${requestId} for topic: ${topic.trim()}`);
         
-        const questions = await QuizGenerationService.generateQuiz(extractedText, 10, topic.trim());
+        const questions = await QuizGenerationService.generateQuiz(extractedText, questionCount, topic.trim());
         
         if (questions.length === 0) {
           throw new Error('Could not generate any questions from the document. Please try with a different PDF.');
@@ -199,6 +227,8 @@ export default function Home() {
     setQuizQuestions(null);
     setUploadedFile(null);
     setTopic('');
+    setQuestionCount(10);
+    setSuggestedQuestionCount(10);
     setIsGenerating(false);
   };
 
@@ -329,6 +359,53 @@ export default function Home() {
               }
             </p>
           </div>
+
+          {uploadedFile && (
+            <div className="w-full max-w-xl mx-auto">
+              <label htmlFor="questionCount" className="block text-base font-medium text-gray-700 mb-2 text-left">
+                Number of Questions
+              </label>
+              <div className="flex items-center space-x-4">
+                <input
+                  id="questionCount"
+                  type="range"
+                  min="5"
+                  max="50"
+                  value={questionCount}
+                  onChange={(e) => setQuestionCount(parseInt(e.target.value))}
+                  className="flex-1 h-2 bg-purple-200 rounded-lg appearance-none cursor-pointer slider"
+                  onClick={(e) => e.stopPropagation()}
+                />
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="number"
+                    min="5"
+                    max="50"
+                    value={questionCount}
+                    onChange={(e) => setQuestionCount(Math.min(Math.max(parseInt(e.target.value) || 5, 5), 50))}
+                    className="w-16 px-2 py-1 text-center border border-purple-200 rounded-md focus:outline-none focus:border-purple-500"
+                    onClick={(e) => e.stopPropagation()}
+                    title="Number of questions"
+                    aria-label="Number of questions"
+                  />
+                </div>
+              </div>
+              <p className="text-xs mt-1 text-left text-gray-500">
+                Suggested: <span className="font-medium text-purple-600">{suggestedQuestionCount} questions</span> based on your PDF size
+                {questionCount !== suggestedQuestionCount && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setQuestionCount(suggestedQuestionCount);
+                    }}
+                    className="ml-2 text-purple-600 hover:text-purple-800 underline text-xs"
+                  >
+                    Use suggested
+                  </button>
+                )}
+              </p>
+            </div>
+          )}
 
           <button 
             className={`group relative overflow-hidden font-semibold px-8 py-3 rounded-xl transition-all duration-500 shadow-lg transform hover:-translate-y-1 ${
