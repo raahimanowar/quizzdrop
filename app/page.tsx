@@ -28,6 +28,7 @@ export default function Home() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[] | null>(null);
   const [currentStep, setCurrentStep] = useState<'upload' | 'quiz'>('upload');
+  const [topic, setTopic] = useState<string>('');
   const inputRef = useRef<HTMLInputElement>(null);
 
   const showErrorToast = () => {
@@ -142,17 +143,22 @@ export default function Home() {
   };
 
   const handleGenerateQuiz = async () => {
-    if (uploadedFile) {
+    if (uploadedFile && topic.trim()) {
       setIsGenerating(true);
       
       try {
+        setQuizQuestions(null);
+        
         const extractedText = await extractTextFromPDF(uploadedFile);
         
         if (extractedText.length < 100) {
           throw new Error('The PDF content is too short to generate meaningful questions. Please upload a document with more text content.');
         }
 
-        const questions = await QuizGenerationService.generateQuiz(extractedText, 10);
+        const requestId = Date.now();
+        console.log(`Generating quiz with ID: ${requestId} for topic: ${topic.trim()}`);
+        
+        const questions = await QuizGenerationService.generateQuiz(extractedText, 10, topic.trim());
         
         if (questions.length === 0) {
           throw new Error('Could not generate any questions from the document. Please try with a different PDF.');
@@ -160,7 +166,7 @@ export default function Home() {
 
         setQuizQuestions(questions);
         setCurrentStep('quiz');
-        showSuccessToast(`Generated ${questions.length} questions successfully!`);
+        showSuccessToast(`Generated ${questions.length} fresh questions about "${topic.trim()}"!`);
         
       } catch (error) {
         console.error('Error processing PDF:', error);
@@ -172,6 +178,15 @@ export default function Home() {
       } finally {
         setIsGenerating(false);
       }
+    } else {
+      if (!uploadedFile) {
+        setToastMessage('Please upload a PDF file first');
+      } else if (!topic.trim()) {
+        setToastMessage('Please enter a topic for your quiz');
+      }
+      setToastType('error');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
     }
   };
 
@@ -183,6 +198,7 @@ export default function Home() {
     setCurrentStep('upload');
     setQuizQuestions(null);
     setUploadedFile(null);
+    setTopic('');
     setIsGenerating(false);
   };
 
@@ -207,9 +223,9 @@ export default function Home() {
       )}
       
       <nav className="w-full bg-white/10 backdrop-blur-md border-b border-white/20 sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="text-gray-900 px-6 py-3 cursor-pointer" onClick={handleRestart}>
-            <span className="text-xl font-bold">QuizzDrop</span>
+        <div className="max-w-6xl mx-auto px-4 py-2 flex justify-between items-center">
+          <div className="text-gray-900 px-4 py-2 cursor-pointer" onClick={handleRestart}>
+            <span className="text-lg font-bold">QuizzDrop</span>
           </div>
           <a 
             href="https://github.com" 
@@ -217,22 +233,22 @@ export default function Home() {
             rel="noopener noreferrer"
             aria-label="GitHub Repository"
             title="View on GitHub"
-            className="text-white p-3"
+            className="text-white p-2"
           >
-            <FaGithub className="w-6 h-6" />
+            <FaGithub className="w-5 h-5" />
           </a>
         </div>
       </nav>
 
       {isGenerating ? (
-        <main className="flex flex-col items-center justify-center px-6 py-16 min-h-[calc(100vh-80px)]">
-          <div className="max-w-2xl w-full text-center space-y-8">
-            <h1 className="text-4xl font-bold text-gray-900 leading-tight">
-              Generating Quiz
+        <main className="flex flex-col items-center justify-center px-4 py-8 min-h-[calc(100vh-60px)]">
+          <div className="max-w-xl w-full text-center space-y-4">
+            <h1 className="text-3xl font-bold text-gray-900 leading-tight">
+              Generating Fresh Quiz
             </h1>
             
-            <p className="text-lg text-gray-700">
-              Hold up for a moment
+            <p className="text-base text-gray-700">
+              Creating unique questions just for you...
             </p>
             
             <div className="flex justify-center items-center space-x-2">
@@ -245,14 +261,14 @@ export default function Home() {
           </div>
         </main>
       ) : (
-        <main className="flex flex-col items-center justify-center px-6 py-16 min-h-[calc(100vh-80px)]">
-          <div className="max-w-3xl w-full text-center space-y-12">
-          <h1 className="text-5xl font-bold text-gray-900 leading-tight">
+        <main className="flex flex-col items-center justify-center px-4 py-4 min-h-[calc(100vh-60px)]">
+          <div className="max-w-2xl w-full text-center space-y-6">
+          <h1 className="text-3xl font-bold text-gray-900 leading-tight">
             Turn your PDFs into a quiz
           </h1>
           
           <div 
-            className={`bg-white border-2 border-dashed rounded-3xl p-20 transition-all duration-300 cursor-pointer shadow-lg ${
+            className={`bg-white border-2 border-dashed rounded-2xl p-12 transition-all duration-300 cursor-pointer shadow-lg ${
               dragActive 
                 ? 'border-purple-500 bg-purple-100/50' 
                 : uploadedFile 
@@ -273,11 +289,11 @@ export default function Home() {
               className="hidden"
               aria-label="Upload PDF file"
             />
-            <div className="flex flex-col items-center space-y-4">
-              <AiOutlineCloudUpload className={`w-16 h-16 ${
+            <div className="flex flex-col items-center space-y-3">
+              <AiOutlineCloudUpload className={`w-12 h-12 ${
                 uploadedFile ? 'text-green-500' : 'text-purple-400'
               }`} />
-              <div className={`text-xl font-medium ${
+              <div className={`text-lg font-medium ${
                 uploadedFile ? 'text-green-600' : 'text-purple-600'
               }`}>
                 {uploadedFile ? `✓ ${uploadedFile.name}` : 'Drop your PDF here'}
@@ -288,19 +304,47 @@ export default function Home() {
             </div>
           </div>
 
+          <div className="w-full max-w-xl mx-auto">
+            <label htmlFor="topic" className="block text-base font-medium text-gray-700 mb-2 text-left">
+              Quiz Topic <span className="text-red-500">*</span>
+            </label>
+            <input
+              id="topic"
+              type="text"
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
+              placeholder="e.g., Machine Learning, World War II, Cell Biology..."
+              className={`w-full px-4 py-3 text-base border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-200 transition-all duration-300 bg-white/80 backdrop-blur-sm ${
+                topic.trim() ? 'border-purple-200 focus:border-purple-500' : 'border-red-300 focus:border-red-500'
+              }`}
+              onClick={(e) => e.stopPropagation()}
+              required
+            />
+            <p className={`text-xs mt-1 text-left ${
+              topic.trim() ? 'text-gray-500' : 'text-red-500'
+            }`}>
+              {topic.trim() 
+                ? 'Specify a topic to focus the quiz questions on relevant content from your PDF'
+                : 'Please enter a topic to generate focused quiz questions'
+              }
+            </p>
+          </div>
+
           <button 
-            className={`group relative overflow-hidden font-semibold px-12 py-4 rounded-2xl transition-all duration-500 shadow-xl transform hover:-translate-y-2 ${
-              uploadedFile 
-                ? 'bg-gradient-to-r from-purple-500 via-purple-600 to-indigo-600 hover:from-purple-600 hover:via-indigo-600 hover:to-purple-700 text-white hover:shadow-2xl cursor-pointer' 
+            className={`group relative overflow-hidden font-semibold px-8 py-3 rounded-xl transition-all duration-500 shadow-lg transform hover:-translate-y-1 ${
+              uploadedFile && topic.trim()
+                ? 'bg-gradient-to-r from-purple-500 via-purple-600 to-indigo-600 hover:from-purple-600 hover:via-indigo-600 hover:to-purple-700 text-white hover:shadow-xl cursor-pointer' 
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
             }`}
-            disabled={!uploadedFile}
+            disabled={!uploadedFile || !topic.trim()}
             onClick={handleGenerateQuiz}
           >
-            {uploadedFile && (
+            {uploadedFile && topic.trim() && (
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
             )}
-            <span className="relative z-10">Generate Quiz</span>
+            <span className="relative z-10">
+              {quizQuestions ? 'Generate New Quiz' : 'Generate Quiz'}
+            </span>
           </button>
           </div>
         </main>
