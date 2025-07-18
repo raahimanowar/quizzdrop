@@ -3,15 +3,43 @@
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import { FaGithub } from 'react-icons/fa';
 import { useState, useRef } from 'react';
+import QuizDisplay from './components/QuizDisplay';
+import { QuizGenerationService, QuizQuestion } from './services/quizGeneration';
+
+let pdfjsLib: any = null;
+
+const setupPDFWorker = async () => {
+  if (!pdfjsLib) {
+    pdfjsLib = await import('pdfjs-dist');
+    
+    if (typeof window !== 'undefined') {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
+    }
+  }
+  return pdfjsLib;
+};
 
 export default function Home() {
   const [dragActive, setDragActive] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<'error' | 'success'>('error');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[] | null>(null);
+  const [currentStep, setCurrentStep] = useState<'upload' | 'quiz'>('upload');
   const inputRef = useRef<HTMLInputElement>(null);
 
   const showErrorToast = () => {
+    setToastMessage('Please upload a PDF file only');
+    setToastType('error');
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+  };
+
+  const showSuccessToast = (message: string) => {
+    setToastMessage(message);
+    setToastType('success');
     setShowToast(true);
     setTimeout(() => setShowToast(false), 3000);
   };
@@ -52,34 +80,135 @@ export default function Home() {
     }
   };
 
-  const handleGenerateQuiz = () => {
+  const extractTextFromPDF = async (file: File): Promise<string> => {
+    try {
+      const pdfLib = await setupPDFWorker();
+
+      const arrayBuffer = await file.arrayBuffer();
+      
+      const loadingTask = pdfLib.getDocument({
+        data: arrayBuffer,
+        disableFontFace: true,
+        nativeImageDecoderSupport: 'none'
+      });
+      
+      const pdf = await loadingTask.promise;
+      let fullText = '';
+
+      if (pdf.numPages === 0) {
+        throw new Error('PDF appears to be empty or corrupted');
+      }
+
+      for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+        try {
+          const page = await pdf.getPage(pageNum);
+          const textContent = await page.getTextContent();
+          
+          if (textContent.items && textContent.items.length > 0) {
+            const pageText = textContent.items
+              .filter((item: any) => item.str && item.str.trim().length > 0)
+              .map((item: any) => item.str)
+              .join(' ');
+            
+            if (pageText.trim()) {
+              fullText += pageText + '\n';
+            }
+          }
+        } catch (pageError) {
+          console.warn(`Failed to extract text from page ${pageNum}:`, pageError);
+        }
+      }
+
+      if (!fullText.trim()) {
+        throw new Error('No readable text found in PDF. The PDF might be image-based or corrupted.');
+      }
+
+      return fullText.trim();
+    } catch (error) {
+      console.error('Error extracting text from PDF:', error);
+      
+      if (error instanceof Error) {
+        if (error.message.includes('Invalid PDF')) {
+          throw new Error('The uploaded file is not a valid PDF document.');
+        } else if (error.message.includes('worker')) {
+          throw new Error('PDF processing failed. Please try refreshing the page and uploading again.');
+        } else if (error.message.includes('No readable text')) {
+          throw error;
+        }
+      }
+      
+      throw new Error('Failed to extract text from PDF. Please ensure the PDF contains readable text.');
+    }
+  };
+
+  const handleGenerateQuiz = async () => {
     if (uploadedFile) {
       setIsGenerating(true);
-      // API call to generate quiz would go here
-      setTimeout(() => {
+      
+      try {
+        const extractedText = await extractTextFromPDF(uploadedFile);
+        
+        if (extractedText.length < 100) {
+          throw new Error('The PDF content is too short to generate meaningful questions. Please upload a document with more text content.');
+        }
+
+        const questions = await QuizGenerationService.generateQuiz(extractedText, 10);
+        
+        if (questions.length === 0) {
+          throw new Error('Could not generate any questions from the document. Please try with a different PDF.');
+        }
+
+        setQuizQuestions(questions);
+        setCurrentStep('quiz');
+        showSuccessToast(`Generated ${questions.length} questions successfully!`);
+        
+      } catch (error) {
+        console.error('Error processing PDF:', error);
+        const errorMessage = error instanceof Error ? error.message : 'Failed to generate quiz. Please try again.';
+        setToastMessage(errorMessage);
+        setToastType('error');
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 5000);
+      } finally {
         setIsGenerating(false);
-        // quiz
-      }, 5000);
+      }
     }
   };
 
   const openFileDialog = () => {
     inputRef.current?.click();
   };
+
+  const handleRestart = () => {
+    setCurrentStep('upload');
+    setQuizQuestions(null);
+    setUploadedFile(null);
+    setIsGenerating(false);
+  };
+
+  if (currentStep === 'quiz' && quizQuestions) {
+    return <QuizDisplay questions={quizQuestions} onRestart={handleRestart} />;
+  }
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-200 via-purple-100 to-purple-200">
       {showToast && (
-        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-[60] bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg animate-bounce">
+        <div className={`fixed top-20 left-1/2 transform -translate-x-1/2 z-[60] px-6 py-3 rounded-lg shadow-lg animate-bounce ${
+          toastType === 'error' 
+            ? 'bg-red-500 text-white' 
+            : 'bg-green-500 text-white'
+        }`}>
           <div className="flex items-center space-x-2">
-            <span className="text-xl font-bold">X</span>
-            <span className="font-medium">Please upload a PDF file only</span>
+            <span className="text-xl font-bold">
+              {toastType === 'error' ? '✗' : '✓'}
+            </span>
+            <span className="font-medium">{toastMessage}</span>
           </div>
         </div>
       )}
       
       <nav className="w-full bg-white/10 backdrop-blur-md border-b border-white/20 sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="text-gray-900 px-6 py-3">
+          <div className="text-gray-900 px-6 py-3 cursor-pointer" onClick={handleRestart}>
             <span className="text-xl font-bold">QuizzDrop</span>
           </div>
           <a 
