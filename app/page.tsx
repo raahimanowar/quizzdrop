@@ -1,9 +1,9 @@
 'use client';
 
 import { AiOutlineCloudUpload } from 'react-icons/ai';
-import { FaGithub } from 'react-icons/fa';
 import { useState, useRef } from 'react';
 import QuizDisplay from './components/QuizDisplay';
+import Navbar from './components/Navbar';
 import { QuizGenerationService, QuizQuestion } from './services/quizGeneration';
 
 let pdfjsLib: any = null;
@@ -99,10 +99,7 @@ export default function Home() {
       const suggested = calculateSuggestedQuestions(text.length, pageCount);
       setSuggestedQuestionCount(suggested);
       setQuestionCount(suggested);
-      
-      console.log(`File analysis: ${text.length} chars, ${pageCount} pages → suggesting ${suggested} questions`);
     } catch (error) {
-      console.log('Could not analyze file for suggestions, using default');
       setSuggestedQuestionCount(10);
       setQuestionCount(10);
     }
@@ -143,7 +140,6 @@ export default function Home() {
             }
           }
         } catch (pageError) {
-          console.warn(`Failed to extract text from page ${pageNum}:`, pageError);
         }
       }
 
@@ -153,8 +149,6 @@ export default function Home() {
 
       return { text: fullText.trim(), pageCount: pdf.numPages };
     } catch (error) {
-      console.error('Error extracting text from PDF:', error);
-      
       if (error instanceof Error) {
         if (error.message.includes('Invalid PDF')) {
           throw new Error('The uploaded file is not a valid PDF document.');
@@ -184,7 +178,6 @@ export default function Home() {
         }
 
         const requestId = Date.now();
-        console.log(`Generating quiz with ID: ${requestId} for topic: ${topic.trim()}`);
         
         const questions = await QuizGenerationService.generateQuiz(extractedText, questionCount, topic.trim());
         
@@ -197,7 +190,6 @@ export default function Home() {
         showSuccessToast(`Generated ${questions.length} fresh questions about "${topic.trim()}"!`);
         
       } catch (error) {
-        console.error('Error processing PDF:', error);
         const errorMessage = error instanceof Error ? error.message : 'Failed to generate quiz. Please try again.';
         setToastMessage(errorMessage);
         setToastType('error');
@@ -252,23 +244,7 @@ export default function Home() {
         </div>
       )}
       
-      <nav className="w-full bg-white/80 backdrop-blur-sm border-b border-gray-100 sticky top-0 z-50 shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="text-gray-900 px-4 py-2 cursor-pointer group" onClick={handleRestart}>
-            <span className="text-2xl font-bold text-purple-600 group-hover:text-purple-700 transition-colors duration-200">QuizzDrop</span>
-          </div>
-          <a 
-            href="https://github.com" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            aria-label="GitHub Repository"
-            title="View on GitHub"
-            className="text-gray-600 hover:text-purple-600 p-2 rounded-lg hover:bg-purple-50 transition-all duration-200"
-          >
-            <FaGithub className="w-5 h-5" />
-          </a>
-        </div>
-      </nav>
+      <Navbar onLogoClick={handleRestart} />
 
       {isGenerating ? (
         <main className="flex flex-col items-center justify-center px-4 py-4 min-h-[calc(100vh-80px)] max-h-[calc(100vh-80px)] overflow-hidden">

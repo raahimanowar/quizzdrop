@@ -36,7 +36,6 @@ export class QuizGenerationService {
     try {
       return await this.generateQuizWithGroq(extractedText, numberOfQuestions, topic);
     } catch (error) {
-      console.error('Error with Groq API:', error);
       throw error;
     }
   }
@@ -138,7 +137,6 @@ TOPIC FOCUS: Create questions specifically related to "${topic}". Only generate 
     try {
       parsedResponse = JSON.parse(cleanContent);
     } catch (parseError) {
-      console.error('Failed to parse Groq response:', cleanContent);
       throw new Error('Invalid JSON response from Groq API');
     }
 

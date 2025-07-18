@@ -27,40 +27,10 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    const mockQuestions: QuizQuestion[] = [
-      {
-        question: "Based on the document content, which of the following statements is most accurate?",
-        options: [
-          "The document discusses key concepts relevant to the subject matter",
-          "The document is primarily about unrelated topics",
-          "The document contains no meaningful information",
-          "The document is purely fictional content"
-        ],
-        correctAnswer: 0,
-        explanation: "The first option is correct as the document contains relevant subject matter that can be used to generate meaningful quiz questions."
-      },
-      {
-        question: "What is the primary purpose of the content in this document?",
-        options: [
-          "To provide entertainment only",
-          "To convey information and knowledge",
-          "To serve as a placeholder text",
-          "To test reading comprehension skills"
-        ],
-        correctAnswer: 1,
-        explanation: "The primary purpose is to convey information and knowledge, which is why it can be used to generate educational quiz questions."
-      }
-    ];
-
-    return NextResponse.json({
-      questions: mockQuestions.slice(0, numberOfQuestions),
-      metadata: {
-        generatedAt: new Date().toISOString(),
-        textLength: text.length,
-        requestedQuestions: numberOfQuestions,
-        actualQuestions: Math.min(mockQuestions.length, numberOfQuestions)
-      }
-    });
+    return NextResponse.json(
+      { error: 'Quiz generation service not yet implemented' },
+      { status: 501 }
+    );
 
   } catch (error) {
     console.error('Error generating quiz:', error);
