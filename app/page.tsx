@@ -236,12 +236,12 @@ export default function Home() {
     return <QuizDisplay questions={quizQuestions} onRestart={handleRestart} />;
   }
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-200 via-purple-100 to-purple-200">
+    <div className="min-h-screen bg-white">
       {showToast && (
-        <div className={`fixed top-20 left-1/2 transform -translate-x-1/2 z-[60] px-6 py-3 rounded-lg shadow-lg animate-bounce ${
+        <div className={`fixed top-20 left-1/2 transform -translate-x-1/2 z-[60] px-6 py-3 rounded-xl shadow-lg animate-bounce ${
           toastType === 'error' 
-            ? 'bg-red-500 text-white' 
-            : 'bg-green-500 text-white'
+            ? 'bg-red-50 text-red-800 border border-red-200' 
+            : 'bg-green-50 text-green-800 border border-green-200'
         }`}>
           <div className="flex items-center space-x-2">
             <span className="text-xl font-bold">
@@ -252,10 +252,10 @@ export default function Home() {
         </div>
       )}
       
-      <nav className="w-full bg-white/10 backdrop-blur-md border-b border-white/20 sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-4 py-2 flex justify-between items-center">
-          <div className="text-gray-900 px-4 py-2 cursor-pointer" onClick={handleRestart}>
-            <span className="text-lg font-bold">QuizzDrop</span>
+      <nav className="w-full bg-white/80 backdrop-blur-sm border-b border-gray-100 sticky top-0 z-50 shadow-sm">
+        <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+          <div className="text-gray-900 px-4 py-2 cursor-pointer group" onClick={handleRestart}>
+            <span className="text-2xl font-bold text-purple-600 group-hover:text-purple-700 transition-colors duration-200">QuizzDrop</span>
           </div>
           <a 
             href="https://github.com" 
@@ -263,7 +263,7 @@ export default function Home() {
             rel="noopener noreferrer"
             aria-label="GitHub Repository"
             title="View on GitHub"
-            className="text-white p-2"
+            className="text-gray-600 hover:text-purple-600 p-2 rounded-lg hover:bg-purple-50 transition-all duration-200"
           >
             <FaGithub className="w-5 h-5" />
           </a>
@@ -271,18 +271,18 @@ export default function Home() {
       </nav>
 
       {isGenerating ? (
-        <main className="flex flex-col items-center justify-center px-4 py-8 min-h-[calc(100vh-60px)]">
-          <div className="max-w-xl w-full text-center space-y-4">
+        <main className="flex flex-col items-center justify-center px-4 py-4 min-h-[calc(100vh-80px)] max-h-[calc(100vh-80px)] overflow-hidden">
+          <div className="max-w-xl w-full text-center space-y-6">
             <h1 className="text-3xl font-bold text-gray-900 leading-tight">
               Generating Fresh Quiz
             </h1>
             
-            <p className="text-base text-gray-700">
+            <p className="text-lg text-gray-600">
               Creating unique questions just for you...
             </p>
             
             <div className="flex justify-center items-center space-x-2">
-              <div className="flex space-x-1">
+              <div className="flex space-x-2">
                 <div className="w-3 h-3 bg-purple-500 rounded-full animate-bounce"></div>
                 <div className="w-3 h-3 bg-purple-500 rounded-full animate-bounce [animation-delay:0.1s]"></div>
                 <div className="w-3 h-3 bg-purple-500 rounded-full animate-bounce [animation-delay:0.2s]"></div>
@@ -291,19 +291,22 @@ export default function Home() {
           </div>
         </main>
       ) : (
-        <main className="flex flex-col items-center justify-center px-4 py-4 min-h-[calc(100vh-60px)]">
+        <main className="flex flex-col items-center justify-center px-4 py-4 min-h-[calc(100vh-80px)] max-h-[calc(100vh-80px)] overflow-auto">
           <div className="max-w-2xl w-full text-center space-y-6">
-          <h1 className="text-3xl font-bold text-gray-900 leading-tight">
-            Turn your PDFs into a quiz
-          </h1>
+            <div className="space-y-3">
+              <h1 className="text-4xl font-bold text-gray-900 leading-tight">
+                Turn your PDFs into a quiz
+              </h1>
+              <p className="text-lg text-gray-600">Transform any document into an interactive learning experience</p>
+            </div>
           
           <div 
-            className={`bg-white border-2 border-dashed rounded-2xl p-12 transition-all duration-300 cursor-pointer shadow-lg ${
+            className={`group bg-gray-50 border-2 border-dashed rounded-2xl p-8 transition-all duration-300 cursor-pointer hover:bg-gray-100 ${
               dragActive 
-                ? 'border-purple-500 bg-purple-100/50' 
+                ? 'border-purple-500 bg-purple-50' 
                 : uploadedFile 
-                ? 'border-green-400 bg-green-50/30' 
-                : 'border-purple-200 hover:border-purple-400 hover:bg-purple-50/30'
+                ? 'border-green-500 bg-green-50' 
+                : 'border-gray-300 hover:border-purple-400'
             }`}
             onDragEnter={handleDrag}
             onDragLeave={handleDrag}
@@ -321,10 +324,10 @@ export default function Home() {
             />
             <div className="flex flex-col items-center space-y-3">
               <AiOutlineCloudUpload className={`w-12 h-12 ${
-                uploadedFile ? 'text-green-500' : 'text-purple-400'
+                uploadedFile ? 'text-green-500' : 'text-purple-500'
               }`} />
-              <div className={`text-lg font-medium ${
-                uploadedFile ? 'text-green-600' : 'text-purple-600'
+              <div className={`text-lg font-semibold ${
+                uploadedFile ? 'text-green-700' : 'text-gray-900'
               }`}>
                 {uploadedFile ? `✓ ${uploadedFile.name}` : 'Drop your PDF here'}
               </div>
@@ -335,7 +338,7 @@ export default function Home() {
           </div>
 
           <div className="w-full max-w-xl mx-auto">
-            <label htmlFor="topic" className="block text-base font-medium text-gray-700 mb-2 text-left">
+            <label htmlFor="topic" className="block text-base font-semibold text-gray-900 mb-2 text-left">
               Quiz Topic <span className="text-red-500">*</span>
             </label>
             <input
@@ -344,14 +347,14 @@ export default function Home() {
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
               placeholder="e.g., Machine Learning, World War II, Cell Biology..."
-              className={`w-full px-4 py-3 text-base border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-200 transition-all duration-300 bg-white/80 backdrop-blur-sm ${
-                topic.trim() ? 'border-purple-200 focus:border-purple-500' : 'border-red-300 focus:border-red-500'
+              className={`w-full px-4 py-3 text-base border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-purple-100 transition-all duration-200 bg-white ${
+                topic.trim() ? 'border-purple-300 focus:border-purple-500' : 'border-red-300 focus:border-red-500'
               }`}
               onClick={(e) => e.stopPropagation()}
               required
             />
             <p className={`text-xs mt-1 text-left ${
-              topic.trim() ? 'text-gray-500' : 'text-red-500'
+              topic.trim() ? 'text-gray-600' : 'text-red-500'
             }`}>
               {topic.trim() 
                 ? 'Specify a topic to focus the quiz questions on relevant content from your PDF'
@@ -362,66 +365,61 @@ export default function Home() {
 
           {uploadedFile && (
             <div className="w-full max-w-xl mx-auto">
-              <label htmlFor="questionCount" className="block text-base font-medium text-gray-700 mb-2 text-left">
+              <label htmlFor="questionCount" className="block text-base font-semibold text-gray-900 mb-2 text-left">
                 Number of Questions
               </label>
-              <div className="flex items-center space-x-4">
-                <input
-                  id="questionCount"
-                  type="range"
-                  min="5"
-                  max="50"
-                  value={questionCount}
-                  onChange={(e) => setQuestionCount(parseInt(e.target.value))}
-                  className="flex-1 h-2 bg-purple-200 rounded-lg appearance-none cursor-pointer slider"
-                  onClick={(e) => e.stopPropagation()}
-                />
-                <div className="flex items-center space-x-2">
+              <div className="bg-gray-50 rounded-xl p-3 border border-gray-200">
+                <div className="flex items-center space-x-4 mb-2">
+                  <input
+                    id="questionCount"
+                    type="range"
+                    min="5"
+                    max="50"
+                    value={questionCount}
+                    onChange={(e) => setQuestionCount(parseInt(e.target.value))}
+                    className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                    onClick={(e) => e.stopPropagation()}
+                  />
                   <input
                     type="number"
                     min="5"
                     max="50"
                     value={questionCount}
                     onChange={(e) => setQuestionCount(Math.min(Math.max(parseInt(e.target.value) || 5, 5), 50))}
-                    className="w-16 px-2 py-1 text-center border border-purple-200 rounded-md focus:outline-none focus:border-purple-500"
+                    className="w-16 px-2 py-1 text-center border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 bg-white text-sm"
                     onClick={(e) => e.stopPropagation()}
                     title="Number of questions"
                     aria-label="Number of questions"
                   />
                 </div>
+                <p className="text-xs text-gray-600">
+                  Suggested: <span className="font-semibold text-purple-600">{suggestedQuestionCount} questions</span> based on your PDF size
+                  {questionCount !== suggestedQuestionCount && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setQuestionCount(suggestedQuestionCount);
+                      }}
+                      className="ml-2 text-purple-600 hover:text-purple-700 underline text-xs font-medium transition-colors duration-200"
+                    >
+                      Use suggested
+                    </button>
+                  )}
+                </p>
               </div>
-              <p className="text-xs mt-1 text-left text-gray-500">
-                Suggested: <span className="font-medium text-purple-600">{suggestedQuestionCount} questions</span> based on your PDF size
-                {questionCount !== suggestedQuestionCount && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setQuestionCount(suggestedQuestionCount);
-                    }}
-                    className="ml-2 text-purple-600 hover:text-purple-800 underline text-xs"
-                  >
-                    Use suggested
-                  </button>
-                )}
-              </p>
             </div>
           )}
 
           <button 
-            className={`group relative overflow-hidden font-semibold px-8 py-3 rounded-xl transition-all duration-500 shadow-lg transform hover:-translate-y-1 ${
+            className={`font-bold px-8 py-3 rounded-xl transition-all duration-200 shadow-lg text-base ${
               uploadedFile && topic.trim()
-                ? 'bg-gradient-to-r from-purple-500 via-purple-600 to-indigo-600 hover:from-purple-600 hover:via-indigo-600 hover:to-purple-700 text-white hover:shadow-xl cursor-pointer' 
+                ? 'bg-purple-600 hover:bg-purple-700 text-white hover:shadow-xl' 
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
             }`}
             disabled={!uploadedFile || !topic.trim()}
             onClick={handleGenerateQuiz}
           >
-            {uploadedFile && topic.trim() && (
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-            )}
-            <span className="relative z-10">
-              {quizQuestions ? 'Generate New Quiz' : 'Generate Quiz'}
-            </span>
+            {quizQuestions ? 'Generate New Quiz' : 'Generate Quiz'}
           </button>
           </div>
         </main>

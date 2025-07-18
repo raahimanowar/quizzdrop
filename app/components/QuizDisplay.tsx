@@ -94,11 +94,11 @@ export default function QuizDisplay({ questions, onRestart }: QuizDisplayProps) 
     const accuracy = getAccuracy();
     
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-200 via-purple-100 to-purple-200">
-        <nav className="w-full bg-white/10 backdrop-blur-md border-b border-white/20 sticky top-0 z-50">
-          <div className="max-w-6xl mx-auto px-4 py-2 flex justify-between items-center">
-            <div className="text-gray-900 px-4 py-2 cursor-pointer" onClick={onRestart}>
-              <span className="text-lg font-bold">QuizzDrop</span>
+      <div className="min-h-screen bg-white">
+        <nav className="w-full bg-white/80 backdrop-blur-sm border-b border-gray-100 sticky top-0 z-50 shadow-sm">
+          <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div className="text-gray-900 px-4 py-2 cursor-pointer group" onClick={onRestart}>
+              <span className="text-2xl font-bold text-purple-600 group-hover:text-purple-700 transition-colors duration-200">QuizzDrop</span>
             </div>
             <a 
               href="https://github.com" 
@@ -106,63 +106,63 @@ export default function QuizDisplay({ questions, onRestart }: QuizDisplayProps) 
               rel="noopener noreferrer"
               aria-label="GitHub Repository"
               title="View on GitHub"
-              className="text-white p-2"
+              className="text-gray-600 hover:text-purple-600 p-2 rounded-lg hover:bg-purple-50 transition-all duration-200"
             >
               <FaGithub className="w-5 h-5" />
             </a>
           </div>
         </nav>
 
-        <main className="flex flex-col items-center justify-center px-4 py-8 min-h-[calc(100vh-60px)]">
-          <div className="max-w-2xl w-full text-center space-y-8">
+        <main className="flex flex-col items-center justify-center px-4 py-6 min-h-[calc(100vh-80px)] max-h-[calc(100vh-80px)] overflow-hidden">
+          <div className="max-w-2xl w-full h-full flex flex-col justify-center space-y-6">
             
-            <div className="bg-white/20 backdrop-blur-md rounded-3xl border border-white/30 shadow-xl p-8">
-              <h1 className="text-4xl font-bold text-gray-900 mb-6">Quiz Complete! 🎉</h1>
+            <div className="bg-white rounded-2xl border border-gray-200 shadow-lg p-6">
+              <h1 className="text-3xl font-bold text-gray-900 mb-4">Quiz Complete! 🎉</h1>
               
-              <div className="bg-white/40 rounded-2xl p-6 mb-6">
-                <div className="text-6xl font-bold text-purple-600 mb-2">
+              <div className="bg-purple-50 rounded-xl p-4 mb-4 border border-purple-100">
+                <div className="text-4xl font-bold text-purple-600 mb-1">
                   {score}/{questions.length}
                 </div>
-                <p className="text-xl text-gray-700">
+                <p className="text-lg text-gray-700">
                   You answered {score} correctly out of {questions.length}
                 </p>
               </div>
             </div>
 
-            <div className="bg-white/20 backdrop-blur-md rounded-3xl border border-white/30 shadow-xl p-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Stats</h2>
-              <div className="bg-white/40 rounded-xl p-4">
-                <div className="text-3xl font-bold text-green-600">
+            <div className="bg-white rounded-2xl border border-gray-200 shadow-lg p-4">
+              <h2 className="text-xl font-bold text-gray-900 mb-3">Stats</h2>
+              <div className="bg-gray-50 rounded-xl p-3 border border-gray-100">
+                <div className="text-3xl font-bold text-purple-600">
                   Accuracy {accuracy}%
                 </div>
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button
                 onClick={onRestart}
-                className="px-8 py-3 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg transform hover:-translate-y-1 hover:shadow-xl"
+                className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl transition-all duration-200 shadow-lg text-sm"
               >
                 New Quiz
               </button>
               
               <button
                 onClick={handleRetryQuiz}
-                className="px-8 py-3 bg-gradient-to-r from-orange-400 to-red-500 hover:from-orange-500 hover:to-red-600 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg transform hover:-translate-y-1 hover:shadow-xl"
+                className="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded-xl transition-all duration-200 shadow-lg text-sm"
               >
                 Retry Quiz
               </button>
               
               <button
                 onClick={handleShareQuiz}
-                className="px-8 py-3 bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg transform hover:-translate-y-1 hover:shadow-xl"
+                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all duration-200 shadow-lg text-sm"
               >
                 Share Quiz
               </button>
             </div>
 
-            <div className="bg-white/10 rounded-xl p-4">
-              <p className="text-gray-700 italic">
+            <div className="bg-purple-50 rounded-xl p-4 border border-purple-100">
+              <p className="text-gray-700 text-base">
                 {accuracy >= 90 ? "🌟 Excellent work! You're a quiz master!" :
                  accuracy >= 70 ? "👍 Great job! You have a solid understanding!" :
                  accuracy >= 50 ? "📚 Good effort! Keep studying and you'll improve!" :
@@ -176,11 +176,11 @@ export default function QuizDisplay({ questions, onRestart }: QuizDisplayProps) 
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-200 via-purple-100 to-purple-200">
-      <nav className="w-full bg-white/10 backdrop-blur-md border-b border-white/20 sticky top-0 z-50">
+    <div className="min-h-screen bg-white">
+      <nav className="w-full bg-white/80 backdrop-blur-sm border-b border-gray-100 sticky top-0 z-50 shadow-sm">
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="text-gray-900 px-6 py-3 cursor-pointer" onClick={onRestart}>
-            <span className="text-xl font-bold">QuizzDrop</span>
+          <div className="text-gray-900 px-6 py-3 cursor-pointer group" onClick={onRestart}>
+            <span className="text-2xl font-bold text-purple-600 group-hover:text-purple-700 transition-colors duration-200">QuizzDrop</span>
           </div>
           <a 
             href="https://github.com" 
@@ -188,22 +188,22 @@ export default function QuizDisplay({ questions, onRestart }: QuizDisplayProps) 
             rel="noopener noreferrer"
             aria-label="GitHub Repository"
             title="View on GitHub"
-            className="text-white p-3"
+            className="text-gray-600 hover:text-purple-600 p-3 rounded-lg hover:bg-purple-50 transition-all duration-200"
           >
             <FaGithub className="w-6 h-6" />
           </a>
         </div>
       </nav>
 
-      <main className="flex flex-col items-center justify-center px-6 py-16 min-h-[calc(100vh-80px)]">
-        <div className="max-w-4xl w-full">
-          <div className="text-center mb-8">
-            <div className="text-sm text-purple-600 font-medium mb-2">
+      <main className="flex flex-col px-4 py-2 h-[calc(100vh-80px)] overflow-hidden">
+        <div className="max-w-4xl w-full mx-auto h-full flex flex-col">
+          <div className="text-center mb-2">
+            <div className="text-base text-purple-600 font-semibold mb-1">
               Question {currentQuestionIndex + 1} of {questions.length}
             </div>
-            <div className="w-full bg-white/30 rounded-full h-2 mb-4">
+            <div className="w-full bg-gray-200 rounded-full h-1.5 mb-2">
               <div 
-                className="bg-purple-500 h-2 rounded-full progress-bar"
+                className="bg-purple-600 h-1.5 rounded-full progress-bar transition-all duration-500"
                 ref={(el) => {
                   if (el) {
                     el.style.width = `${progressPercentage}%`;
@@ -213,33 +213,33 @@ export default function QuizDisplay({ questions, onRestart }: QuizDisplayProps) 
             </div>
           </div>
 
-          <div className="bg-white/20 backdrop-blur-md rounded-3xl border border-white/30 shadow-xl p-8 mb-8">
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 leading-relaxed">
-                Question: {currentQuestion.question}
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-lg p-3 mb-3 flex-1 flex flex-col min-h-0">
+            <div className="mb-2">
+              <h2 className="text-lg font-bold text-gray-900 leading-tight">
+                {currentQuestion.question}
               </h2>
             </div>
 
-            <div className="space-y-4 mb-8">
+            <div className="space-y-2 mb-2 flex-1 overflow-y-auto">
               {currentQuestion.options.map((option, index) => (
                 <button
                   key={index}
                   onClick={() => handleOptionSelect(index)}
-                  className={`w-full p-4 text-left rounded-xl border-2 transition-all duration-300 font-medium ${
+                  className={`w-full p-2.5 text-left rounded-lg border-2 transition-all duration-200 font-medium text-sm ${
                     showExplanation
                       ? index === currentQuestion.correctAnswer
-                        ? 'bg-green-100 border-green-400 text-green-800'
+                        ? 'bg-green-50 border-green-500 text-green-800'
                         : selectedOption === index && index !== currentQuestion.correctAnswer
-                        ? 'bg-red-100 border-red-400 text-red-800'
-                        : 'bg-white/50 border-gray-200 text-gray-700'
+                        ? 'bg-red-50 border-red-500 text-red-800'
+                        : 'bg-gray-50 border-gray-200 text-gray-600'
                       : selectedOption === index
-                      ? 'bg-purple-100 border-purple-400 text-purple-800'
-                      : 'bg-white/50 border-gray-200 text-gray-700 hover:bg-purple-50 hover:border-purple-300'
+                      ? 'bg-purple-50 border-purple-500 text-purple-800'
+                      : 'bg-gray-50 border-gray-200 text-gray-900 hover:bg-purple-50 hover:border-purple-300'
                   }`}
                   disabled={showExplanation}
                 >
-                  <div className="flex items-center space-x-3">
-                    <span className="font-bold">
+                  <div className="flex items-center space-x-2">
+                    <span className="font-bold text-sm text-purple-600">
                       {String.fromCharCode(65 + index)}.
                     </span>
                     <span>{option}</span>
@@ -249,9 +249,9 @@ export default function QuizDisplay({ questions, onRestart }: QuizDisplayProps) 
             </div>
 
             {showExplanation && (
-              <div className="bg-blue-50/80 border border-blue-200 rounded-xl p-6 animate-fadeIn">
-                <h3 className="font-bold text-blue-900 mb-2">Explanation:</h3>
-                <p className="text-blue-800 leading-relaxed">{currentQuestion.explanation}</p>
+              <div className="bg-blue-50 border border-blue-200 rounded-xl p-2.5 animate-fadeIn">
+                <h3 className="font-bold text-blue-800 mb-1 text-sm">Explanation:</h3>
+                <p className="text-blue-700 leading-relaxed text-sm">{currentQuestion.explanation}</p>
               </div>
             )}
           </div>
@@ -260,18 +260,18 @@ export default function QuizDisplay({ questions, onRestart }: QuizDisplayProps) 
             <button
               onClick={handlePrevious}
               disabled={currentQuestionIndex === 0}
-              className={`px-8 py-3 rounded-xl font-semibold transition-all duration-300 ${
+              className={`px-6 py-3 rounded-xl font-bold transition-all duration-200 text-sm ${
                 currentQuestionIndex === 0
                   ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                  : 'bg-yellow-400 hover:bg-yellow-500 text-yellow-900 hover:shadow-lg transform hover:-translate-y-1'
+                  : 'bg-yellow-500 hover:bg-yellow-600 text-white shadow-lg'
               }`}
             >
               Previous
             </button>
 
-            <div className="text-center">
-              <div className="text-sm text-gray-600 mb-1">Score</div>
-              <div className="text-2xl font-bold text-purple-600">
+            <div className="text-center bg-purple-50 rounded-xl p-3 border border-purple-200">
+              <div className="text-xs text-purple-600">Score</div>
+              <div className="text-xl font-bold text-purple-600">
                 {getScore()}/{questions.length}
               </div>
             </div>
@@ -279,10 +279,10 @@ export default function QuizDisplay({ questions, onRestart }: QuizDisplayProps) 
             <button
               onClick={handleContinue}
               disabled={!showExplanation}
-              className={`px-8 py-3 rounded-xl font-semibold transition-all duration-300 ${
+              className={`px-6 py-3 rounded-xl font-bold transition-all duration-200 text-sm ${
                 !showExplanation
                   ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                  : 'bg-blue-500 hover:bg-blue-600 text-white hover:shadow-lg transform hover:-translate-y-1'
+                  : 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg'
               }`}
             >
               {currentQuestionIndex === questions.length - 1 ? 'View Results' : 'Continue'}
