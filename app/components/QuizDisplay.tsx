@@ -165,10 +165,10 @@ export default function QuizDisplay({ questions, onRestart }: QuizDisplayProps) 
     <div className="min-h-screen bg-white">
       <Navbar onLogoClick={onRestart} />
 
-      <main className="flex flex-col px-4 py-2 h-[calc(100vh-80px)] overflow-hidden">
-        <div className="max-w-4xl w-full mx-auto h-full flex flex-col">
-          <div className="text-center mb-2">
-            <div className="text-base text-purple-600 font-semibold mb-1">
+      <main className="flex flex-col px-4 py-4 min-h-[calc(100vh-80px)] overflow-auto">
+        <div className="max-w-4xl w-full mx-auto flex flex-col">
+          <div className="text-center mb-3">
+            <div className="text-base text-purple-600 font-semibold mb-2">
               Question {currentQuestionIndex + 1} of {questions.length}
             </div>
             <div className="w-full bg-gray-200 rounded-full h-1.5 mb-2">
@@ -183,14 +183,14 @@ export default function QuizDisplay({ questions, onRestart }: QuizDisplayProps) 
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-gray-200 shadow-lg p-3 mb-3 flex-1 flex flex-col min-h-0">
-            <div className="mb-2">
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-lg p-3 mb-3">
+            <div className="mb-3">
               <h2 className="text-lg font-bold text-gray-900 leading-tight">
                 {currentQuestion.question}
               </h2>
             </div>
 
-            <div className="space-y-2 mb-2 flex-1 overflow-y-auto">
+            <div className="space-y-2 mb-3">
               {currentQuestion.options.map((option, index) => (
                 <button
                   key={index}
