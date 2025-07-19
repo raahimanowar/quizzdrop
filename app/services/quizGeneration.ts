@@ -1,4 +1,4 @@
-interface QuizQuestion {
+export interface QuizQuestion {
   question: string;
   options: string[];
   correctAnswer: number;
@@ -99,7 +99,7 @@ TOPIC FOCUS: Create questions specifically related to "${topic}". Only generate 
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "llama-3.3-70b-versatile",
+        model: "llama-3.1-8b-instant",
         messages: [
           {
             role: "system",
@@ -236,5 +236,3 @@ TOPIC FOCUS: Create questions specifically related to "${topic}". Only generate 
     );
   }
 }
-
-export type { QuizQuestion };

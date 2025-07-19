@@ -2,9 +2,10 @@
 
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import { useState, useRef } from 'react';
+import { useUser } from '@clerk/nextjs';
 import QuizDisplay from './components/QuizDisplay';
 import Navbar from './components/Navbar';
-import { QuizGenerationService, QuizQuestion } from './services/quizGeneration';
+import { QuizQuestion } from './services/quizGeneration';
 
 let pdfjsLib: any = null;
 
@@ -20,6 +21,7 @@ const setupPDFWorker = async () => {
 };
 
 export default function Home() {
+  const { isSignedIn, user } = useUser();
   const [dragActive, setDragActive] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [showToast, setShowToast] = useState(false);
@@ -31,6 +33,7 @@ export default function Home() {
   const [topic, setTopic] = useState<string>('');
   const [questionCount, setQuestionCount] = useState<number>(10);
   const [suggestedQuestionCount, setSuggestedQuestionCount] = useState<number>(10);
+  const [rateLimit, setRateLimit] = useState<{ remaining: number; resetTime: number | null }>({ remaining: 5, resetTime: null });
   const inputRef = useRef<HTMLInputElement>(null);
 
   const calculateSuggestedQuestions = (textLength: number, pageCount: number): number => {
@@ -164,6 +167,14 @@ export default function Home() {
   };
 
   const handleGenerateQuiz = async () => {
+    if (!isSignedIn) {
+      setToastMessage('Please sign in to generate quizzes');
+      setToastType('error');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 5000);
+      return;
+    }
+
     if (uploadedFile && topic.trim()) {
       setIsGenerating(true);
       
@@ -177,17 +188,48 @@ export default function Home() {
           throw new Error('The PDF content is too short to generate meaningful questions. Please upload a document with more text content.');
         }
 
-        const requestId = Date.now();
+        const response = await fetch('/api/generate-quiz', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            text: extractedText,
+            numberOfQuestions: questionCount,
+            difficulty: 'medium',
+            questionTypes: ['multiple-choice'],
+            instructions: `Generate quiz questions about: ${topic.trim()}`
+          })
+        });
+
+        const remaining = response.headers.get('X-RateLimit-Remaining');
+        const resetTime = response.headers.get('X-RateLimit-Reset');
         
-        const questions = await QuizGenerationService.generateQuiz(extractedText, questionCount, topic.trim());
-        
-        if (questions.length === 0) {
-          throw new Error('Could not generate any questions from the document. Please try with a different PDF.');
+        if (remaining) {
+          setRateLimit({
+            remaining: parseInt(remaining),
+            resetTime: resetTime ? parseInt(resetTime) : null
+          });
         }
 
-        setQuizQuestions(questions);
+        if (response.status === 429) {
+          const errorData = await response.json();
+          throw new Error(errorData.message);
+        }
+
+        if (response.status === 401) {
+          throw new Error('Authentication required. Please sign in again.');
+        }
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to generate quiz');
+        }
+
+        const quizData = await response.json();
+        setQuizQuestions(quizData.questions);
         setCurrentStep('quiz');
-        showSuccessToast(`Generated ${questions.length} fresh questions about "${topic.trim()}"!`);
+        showSuccessToast(`Generated ${quizData.questions.length} fresh questions about "${topic.trim()}"!`);
         
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to generate quiz. Please try again.';
@@ -386,16 +428,32 @@ export default function Home() {
             </div>
           )}
 
+          {isSignedIn && (
+            <div className="text-sm text-gray-600 mb-4 text-center">
+              <span className="inline-flex items-center gap-2">
+                📊 Daily quizzes remaining: 
+                <span className={`font-semibold ${rateLimit.remaining === 0 ? 'text-red-600' : 'text-purple-600'}`}>
+                  {rateLimit.remaining}/5
+                </span>
+              </span>
+              {rateLimit.resetTime && rateLimit.remaining === 0 && (
+                <div className="text-red-600 mt-1 text-xs">
+                  Resets at: {new Date(rateLimit.resetTime).toLocaleString()}
+                </div>
+              )}
+            </div>
+          )}
+
           <button 
             className={`font-bold px-8 py-3 rounded-xl transition-all duration-200 shadow-lg text-base ${
-              uploadedFile && topic.trim()
+              uploadedFile && topic.trim() && (isSignedIn ? rateLimit.remaining > 0 : true)
                 ? 'bg-purple-600 hover:bg-purple-700 text-white hover:shadow-xl' 
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
             }`}
-            disabled={!uploadedFile || !topic.trim()}
+            disabled={!uploadedFile || !topic.trim() || (isSignedIn && rateLimit.remaining === 0)}
             onClick={handleGenerateQuiz}
           >
-            {quizQuestions ? 'Generate New Quiz' : 'Generate Quiz'}
+            {!isSignedIn ? 'Sign In to Generate Quiz' : quizQuestions ? 'Generate New Quiz' : 'Generate Quiz'}
           </button>
           </div>
         </main>

@@ -17,6 +17,7 @@ export default function QuizDisplay({ questions, onRestart }: QuizDisplayProps) 
   const [userAnswers, setUserAnswers] = useState<(number | null)[]>(
     new Array(questions.length).fill(null)
   );
+  const [copyFeedback, setCopyFeedback] = useState(false);
 
   const currentQuestion = questions[currentQuestionIndex];
   const progressPercentage = ((currentQuestionIndex + 1) / questions.length) * 100;
@@ -84,7 +85,8 @@ export default function QuizDisplay({ questions, onRestart }: QuizDisplayProps) 
       });
     } else {
       navigator.clipboard.writeText(shareText).then(() => {
-        alert('Quiz results copied to clipboard!');
+        setCopyFeedback(true);
+        setTimeout(() => setCopyFeedback(false), 2000);
       });
     }
   };
@@ -139,9 +141,9 @@ export default function QuizDisplay({ questions, onRestart }: QuizDisplayProps) 
               
               <button
                 onClick={handleShareQuiz}
-                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all duration-200 shadow-lg text-sm"
+                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all duration-200 shadow-lg text-sm relative"
               >
-                Share Quiz
+                {copyFeedback ? 'Copied!' : 'Share Quiz'}
               </button>
             </div>
 
