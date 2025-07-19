@@ -2,6 +2,12 @@
 
 AI-powered quiz generator that transforms PDF documents into interactive learning experiences.
 
+## 🎥 Demo Video
+
+> **Watch QuizzDrop in action!** See how easy it is to transform any PDF into an interactive quiz.
+
+
+
 ## Features
 
 - **PDF to Quiz**: Upload any PDF and generate multiple-choice questions automatically
@@ -60,19 +66,7 @@ AI-powered quiz generator that transforms PDF documents into interactive learnin
 - **AI**: Groq API (Llama 3.1)
 - **PDF Processing**: PDF.js
 - **Styling**: Tailwind CSS
-- **Icons**: Lucide React
-
-## Deployment
-
-Deploy to Vercel with one click:
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/raahimanowar/quizzdrop)
-
-Don't forget to add your environment variables in the Vercel dashboard.
-
-## License
-
-MIT License - see [LICENSE](LICENSE) for details.
+- **Deployment**: Vercel
 
 ---
 

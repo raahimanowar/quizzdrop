@@ -315,7 +315,7 @@ export default function Home() {
               <h1 className="text-2xl font-bold text-gray-900 leading-tight">
                 Turn your PDFs into a quiz
               </h1>
-              <p className="text-sm text-gray-600">Transform any document into an interactive learning experience</p>
+              <p className="text-sm text-gray-600">Transform any pdf into an interactive learning experience</p>
             </div>
           
           <div 
