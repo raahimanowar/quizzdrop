@@ -6,7 +6,7 @@ AI-powered quiz generator that transforms PDF documents into interactive learnin
 
 > **Watch QuizzDrop in action!** See how easy it is to transform any PDF into an interactive quiz.
 
-
+https://github.com/user-attachments/assets/733923e3-07ff-4521-88e9-a3b1d92a5858
 
 ## Features
 
