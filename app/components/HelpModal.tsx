@@ -106,7 +106,7 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
             <h3 className="text-xl font-semibold text-gray-900 mb-4">Usage Limits</h3>
             <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
               <p className="text-gray-700 text-sm">
-                You can generate up to <span className="font-semibold text-purple-600">5 quizzes per day</span>. 
+                You can generate up to <span className="font-semibold text-purple-600">3 quizzes per day</span>. 
                 This limit resets every 24 hours. Make the most of your daily quota by following the tips above!
               </p>
             </div>

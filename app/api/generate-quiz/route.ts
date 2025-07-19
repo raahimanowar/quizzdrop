@@ -13,7 +13,7 @@ interface QuizRequest {
 // In-memory rate limiting store (use Redis in production)
 const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
 
-const RATE_LIMIT = 5;
+const RATE_LIMIT = 3;
 const WINDOW_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 function checkRateLimit(userId: string): { allowed: boolean; remaining: number; resetTime: number } {

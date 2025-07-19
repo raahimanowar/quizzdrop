@@ -1,180 +1,79 @@
-# QuizzDrop - AI-Powered PDF Quiz Generator
+# QuizzDrop
 
-Transform your PDF documents into interactive quizzes using AI! QuizzDrop extracts text from PDF files and generates multiple-choice questions automatically.
+AI-powered quiz generator that transforms PDF documents into interactive learning experiences.
 
-## 🚀 Features
+## Features
 
-- **PDF Upload**: Drag & drop or click to upload PDF files
-- **AI Quiz Generation**: Automatically generate multiple-choice questions from PDF content
-- **Interactive Quiz Interface**: Answer questions with immediate feedback
-- **Progress Tracking**: Visual progress bar and score tracking
-- **Modern UI**: Beautiful glassmorphism design with purple gradient theme
-- **Client-side PDF Processing**: Fast, secure PDF text extraction using PDF.js
+- **PDF to Quiz**: Upload any PDF and generate multiple-choice questions automatically
+- **AI-Powered**: Uses Groq's Llama 3.1 model for intelligent question generation
+- **User Authentication**: Secure sign-in with Clerk
+- **Rate Limiting**: 3 quizzes per day per user
+- **Interactive Interface**: Real-time feedback with explanations
+- **Responsive Design**: Works seamlessly on desktop and mobile
 
-## 🛠️ Tech Stack
+## Quick Start
 
-- **Frontend**: Next.js 14, React, TypeScript
-- **Styling**: Tailwind CSS
-- **PDF Processing**: PDF.js (pdfjs-dist)
-- **Icons**: React Icons
-- **AI Integration**: Configurable (OpenAI, custom API)
-
-## 📋 Prerequisites
-
-- Node.js 18+ 
-- npm or yarn package manager
-
-## 🔧 Installation
-
-1. **Clone the repository**
+1. **Clone and install**
    ```bash
-   git clone <your-repo-url>
+   git clone https://github.com/raahimanowar/quizzdrop.git
    cd quizzdrop
-   ```
-
-2. **Install dependencies**
-   ```bash
    npm install
    ```
 
-3. **Configure environment variables**
+2. **Set up environment variables**
    ```bash
    cp .env.example .env.local
    ```
-
-4. **Edit environment variables** (optional)
+   
+   Add your API keys:
    ```env
-   # For OpenRouter integration (recommended - free model available)
-   NEXT_PUBLIC_OPENROUTER_API_KEY=your-openrouter-api-key
-
-   # For OpenAI integration
-   NEXT_PUBLIC_OPENAI_API_KEY=your-openai-api-key
-
-   # For custom AI API
-   NEXT_PUBLIC_AI_API_URL=your-api-url
-   NEXT_PUBLIC_AI_API_KEY=your-api-key
+   # Authentication (required)
+   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+   CLERK_SECRET_KEY=your_clerk_secret_key
+   
+   # AI Service (required)
+   GROQ_API_KEY=your_groq_api_key
    ```
 
-5. **Start the development server**
+3. **Run the application**
    ```bash
    npm run dev
    ```
+   
+   Open [http://localhost:3000](http://localhost:3000)
 
-6. **Open in browser**
-   Navigate to `http://localhost:3000`
+## API Keys Setup
 
-## 🎯 How to Use
+### Clerk Authentication
+1. Create account at [clerk.com](https://clerk.com)
+2. Create new application
+3. Copy keys from dashboard
 
-1. **Upload a PDF**: 
-   - Drag and drop a PDF file onto the upload area
-   - Or click the upload area to browse for files
-   - Only PDF files are accepted
+### Groq AI Service
+1. Sign up at [console.groq.com](https://console.groq.com)
+2. Generate API key
 
-2. **Generate Quiz**:
-   - Click the "Generate Quiz" button
-   - Wait for AI processing (this may take a few moments)
-   - The app will extract text and generate questions
+## Tech Stack
 
-3. **Take the Quiz**:
-   - Answer multiple-choice questions
-   - Get immediate feedback with explanations
-   - Track your progress and score
-   - Navigate between questions
+- **Framework**: Next.js 15 with TypeScript
+- **Authentication**: Clerk
+- **AI**: Groq API (Llama 3.1)
+- **PDF Processing**: PDF.js
+- **Styling**: Tailwind CSS
+- **Icons**: Lucide React
 
-4. **Restart**: 
-   - Click "Restart" to upload a new PDF
-   - Or click the QuizzDrop logo to return to upload
+## Deployment
 
-## 🤖 AI Integration Options
+Deploy to Vercel with one click:
 
-### Option 1: OpenRouter API (Recommended)
-The app now supports OpenRouter API with the free Venice model. This provides high-quality quiz generation at no cost:
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/raahimanowar/quizzdrop)
 
-1. Get an API key from [OpenRouter](https://openrouter.ai/)
-2. Add it to your `.env.local` file:
-   ```env
-   NEXT_PUBLIC_OPENROUTER_API_KEY=your-openrouter-api-key-here
-   ```
-3. The app will automatically use the Venice model for quiz generation
+Don't forget to add your environment variables in the Vercel dashboard.
 
-### Option 2: Local API (Default Fallback)
-The app includes a built-in API route at `/api/generate-quiz` that returns mock questions for testing. This works out of the box without any configuration.
+## License
 
-### Option 3: OpenAI Integration
-To use OpenAI for real quiz generation:
-
-1. Get an OpenAI API key from [OpenAI Platform](https://platform.openai.com)
-2. Add it to your `.env.local` file:
-   ```env
-   NEXT_PUBLIC_OPENAI_API_KEY=your-openai-api-key-here
-   ```
-3. Update the quiz generation service to use OpenAI method
-
-### Option 4: Custom AI API
-Integrate with any AI service by:
-
-1. Setting up your API endpoint
-2. Configuring the API URL in environment variables
-3. Ensuring your API follows the expected request/response format
-
-## 📁 Project Structure
-
-```
-quizzdrop/
-├── app/
-│   ├── components/
-│   │   └── QuizDisplay.tsx       # Quiz interface component
-│   ├── services/
-│   │   └── quizGeneration.ts     # AI service integration
-│   ├── api/
-│   │   └── generate-quiz/
-│   │       └── route.ts          # Local API route
-│   ├── globals.css               # Global styles
-│   ├── layout.tsx                # App layout
-│   └── page.tsx                  # Main upload page
-├── public/                       # Static assets
-├── .env.example                  # Environment variables template
-└── README.md                     # This file
-```
-
-## 🔧 API Reference
-
-### POST /api/generate-quiz
-
-Generate quiz questions from extracted text.
-
-**Request Body:**
-```json
-{
-  "text": "extracted PDF text content",
-  "numberOfQuestions": 10,
-  "difficulty": "medium",
-  "questionTypes": ["multiple-choice"],
-  "instructions": "generation instructions"
-}
-```
-
-**Response:**
-```json
-{
-  "questions": [
-    {
-      "question": "What is...?",
-      "options": ["Option A", "Option B", "Option C", "Option D"],
-      "correctAnswer": 0,
-      "explanation": "The correct answer is A because..."
-    }
-  ]
-}
-```
-
-## 🚀 Deployment
-
-### Vercel (Recommended)
-1. Connect your GitHub repository to Vercel
-2. Configure environment variables in Vercel dashboard
-3. Deploy automatically on git push
+MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-Made with ❤️ using Next.js and AI
+Built with ❤️ by [Raahim Anowar](https://github.com/raahimanowar)

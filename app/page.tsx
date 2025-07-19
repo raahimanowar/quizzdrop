@@ -33,7 +33,7 @@ export default function Home() {
   const [topic, setTopic] = useState<string>('');
   const [questionCount, setQuestionCount] = useState<number>(10);
   const [suggestedQuestionCount, setSuggestedQuestionCount] = useState<number>(10);
-  const [rateLimit, setRateLimit] = useState<{ remaining: number; resetTime: number | null }>({ remaining: 5, resetTime: null });
+  const [rateLimit, setRateLimit] = useState<{ remaining: number; resetTime: number | null }>({ remaining: 3, resetTime: null });
   const inputRef = useRef<HTMLInputElement>(null);
 
   const calculateSuggestedQuestions = (textLength: number, pageCount: number): number => {
@@ -433,7 +433,7 @@ export default function Home() {
               <span className="inline-flex items-center gap-2">
                 📊 Daily quizzes remaining: 
                 <span className={`font-semibold ${rateLimit.remaining === 0 ? 'text-red-600' : 'text-purple-600'}`}>
-                  {rateLimit.remaining}/5
+                  {rateLimit.remaining}/3
                 </span>
               </span>
               {rateLimit.resetTime && rateLimit.remaining === 0 && (
