@@ -289,37 +289,37 @@ export default function Home() {
       <Navbar onLogoClick={handleRestart} />
 
       {isGenerating ? (
-        <main className="flex flex-col items-center justify-center px-4 py-4 min-h-[calc(100vh-80px)] max-h-[calc(100vh-80px)] overflow-hidden">
-          <div className="max-w-xl w-full text-center space-y-6">
-            <h1 className="text-3xl font-bold text-gray-900 leading-tight">
+        <main className="flex flex-col items-center justify-center px-4 py-2 min-h-[calc(100vh-80px)] max-h-[calc(100vh-80px)] overflow-hidden">
+          <div className="max-w-sm w-full text-center space-y-4">
+            <h1 className="text-2xl font-bold text-gray-900 leading-tight">
               Generating Fresh Quiz
             </h1>
             
-            <p className="text-lg text-gray-600">
+            <p className="text-base text-gray-600">
               Creating unique questions just for you...
             </p>
             
             <div className="flex justify-center items-center space-x-2">
               <div className="flex space-x-2">
-                <div className="w-3 h-3 bg-purple-500 rounded-full animate-bounce"></div>
-                <div className="w-3 h-3 bg-purple-500 rounded-full animate-bounce [animation-delay:0.1s]"></div>
-                <div className="w-3 h-3 bg-purple-500 rounded-full animate-bounce [animation-delay:0.2s]"></div>
+                <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce"></div>
+                <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce [animation-delay:0.1s]"></div>
+                <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce [animation-delay:0.2s]"></div>
               </div>
             </div>
           </div>
         </main>
       ) : (
-        <main className="flex flex-col items-center px-4 py-6 min-h-[calc(100vh-80px)] overflow-auto">
-          <div className="max-w-2xl w-full text-center space-y-4">
-            <div className="space-y-2">
-              <h1 className="text-3xl font-bold text-gray-900 leading-tight">
+        <main className="flex flex-col items-center justify-center px-4 py-2 min-h-[calc(100vh-80px)] overflow-hidden">
+          <div className="max-w-lg w-full text-center space-y-3">
+            <div className="space-y-1">
+              <h1 className="text-2xl font-bold text-gray-900 leading-tight">
                 Turn your PDFs into a quiz
               </h1>
-              <p className="text-base text-gray-600">Transform any document into an interactive learning experience</p>
+              <p className="text-sm text-gray-600">Transform any document into an interactive learning experience</p>
             </div>
           
           <div 
-            className={`group bg-gray-50 border-2 border-dashed rounded-2xl p-6 transition-all duration-300 cursor-pointer hover:bg-gray-100 ${
+            className={`group bg-gray-50 border-2 border-dashed rounded-2xl p-4 transition-all duration-300 cursor-pointer hover:bg-gray-100 ${
               dragActive 
                 ? 'border-purple-500 bg-purple-50' 
                 : uploadedFile 
@@ -341,22 +341,22 @@ export default function Home() {
               aria-label="Upload PDF file"
             />
             <div className="flex flex-col items-center space-y-2">
-              <AiOutlineCloudUpload className={`w-10 h-10 ${
+              <AiOutlineCloudUpload className={`w-8 h-8 ${
                 uploadedFile ? 'text-green-500' : 'text-purple-500'
               }`} />
-              <div className={`text-base font-semibold ${
+              <div className={`text-sm font-semibold ${
                 uploadedFile ? 'text-green-700' : 'text-gray-900'
               }`}>
                 {uploadedFile ? `✓ ${uploadedFile.name}` : 'Drop your PDF here'}
               </div>
-              <div className="text-gray-500 text-sm">
+              <div className="text-gray-500 text-xs">
                 {uploadedFile ? 'File ready for quiz generation' : 'or click to browse files'}
               </div>
             </div>
           </div>
 
-          <div className="w-full max-w-xl mx-auto">
-            <label htmlFor="topic" className="block text-sm font-semibold text-gray-900 mb-1 text-left">
+          <div className="w-full max-w-lg mx-auto">
+            <label htmlFor="topic" className="block text-xs font-semibold text-gray-900 mb-1 text-left">
               Quiz Topic <span className="text-red-500">*</span>
             </label>
             <input
@@ -364,8 +364,8 @@ export default function Home() {
               type="text"
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
-              placeholder="e.g., Machine Learning, World War II, Cell Biology..."
-              className={`w-full px-4 py-2 text-sm border-2 rounded-xl focus:outline-none focus:ring-4 focus:ring-purple-100 transition-all duration-200 bg-white ${
+              placeholder="e.g., Machine Learning, World War II..."
+              className={`w-full px-3 py-2 text-sm border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-100 transition-all duration-200 bg-white ${
                 topic.trim() ? 'border-purple-300 focus:border-purple-500' : 'border-red-300 focus:border-red-500'
               }`}
               onClick={(e) => e.stopPropagation()}
@@ -375,19 +375,19 @@ export default function Home() {
               topic.trim() ? 'text-gray-600' : 'text-red-500'
             }`}>
               {topic.trim() 
-                ? 'Specify a topic to focus the quiz questions on relevant content from your PDF'
-                : 'Please enter a topic to generate focused quiz questions'
+                ? 'Specify a topic to focus the quiz questions'
+                : 'Please enter a topic for focused questions'
               }
             </p>
           </div>
 
           {uploadedFile && (
-            <div className="w-full max-w-xl mx-auto">
-              <label htmlFor="questionCount" className="block text-sm font-semibold text-gray-900 mb-1 text-left">
+            <div className="w-full max-w-lg mx-auto">
+              <label htmlFor="questionCount" className="block text-xs font-semibold text-gray-900 mb-1 text-left">
                 Number of Questions
               </label>
-              <div className="bg-gray-50 rounded-xl p-3 border border-gray-200">
-                <div className="flex items-center space-x-3 mb-1">
+              <div className="bg-gray-50 rounded-xl p-2 border border-gray-200">
+                <div className="flex items-center space-x-2 mb-1">
                   <input
                     id="questionCount"
                     type="range"
@@ -395,7 +395,7 @@ export default function Home() {
                     max="50"
                     value={questionCount}
                     onChange={(e) => setQuestionCount(parseInt(e.target.value))}
-                    className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                    className="flex-1 h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
                     onClick={(e) => e.stopPropagation()}
                   />
                   <input
@@ -404,21 +404,21 @@ export default function Home() {
                     max="50"
                     value={questionCount}
                     onChange={(e) => setQuestionCount(Math.min(Math.max(parseInt(e.target.value) || 5, 5), 50))}
-                    className="w-14 px-2 py-1 text-center border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 bg-white text-xs"
+                    className="w-12 px-1 py-1 text-center border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 bg-white text-xs"
                     onClick={(e) => e.stopPropagation()}
                     title="Number of questions"
                     aria-label="Number of questions"
                   />
                 </div>
                 <p className="text-xs text-gray-600">
-                  Suggested: <span className="font-semibold text-purple-600">{suggestedQuestionCount} questions</span> based on your PDF size
+                  Suggested: <span className="font-semibold text-purple-600">{suggestedQuestionCount} questions</span>
                   {questionCount !== suggestedQuestionCount && (
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         setQuestionCount(suggestedQuestionCount);
                       }}
-                      className="ml-2 text-purple-600 hover:text-purple-700 underline text-xs font-medium transition-colors duration-200"
+                      className="ml-1 text-purple-600 hover:text-purple-700 underline text-xs font-medium transition-colors duration-200"
                     >
                       Use suggested
                     </button>
@@ -430,7 +430,7 @@ export default function Home() {
 
           {isSignedIn && (
             <div className="text-xs text-gray-600 text-center">
-              <span className="inline-flex items-center gap-2">
+              <span className="inline-flex items-center gap-1">
                 📊 Daily quizzes remaining: 
                 <span className={`font-semibold ${rateLimit.remaining === 0 ? 'text-red-600' : 'text-purple-600'}`}>
                   {rateLimit.remaining}/3
@@ -445,7 +445,7 @@ export default function Home() {
           )}
 
           <button 
-            className={`font-bold px-6 py-2 rounded-xl transition-all duration-200 shadow-lg text-sm ${
+            className={`font-bold px-4 py-2 rounded-xl transition-all duration-200 shadow-lg text-sm ${
               uploadedFile && topic.trim() && (isSignedIn ? rateLimit.remaining > 0 : true)
                 ? 'bg-purple-600 hover:bg-purple-700 text-white hover:shadow-xl' 
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'

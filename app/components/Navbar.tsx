@@ -17,21 +17,21 @@ export default function Navbar({ onLogoClick }: NavbarProps) {
   return (
     <>
       <nav className="w-full bg-white/80 backdrop-blur-sm border-b border-gray-100 sticky top-0 z-50 shadow-sm">
-      <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-        <div className="text-gray-900 px-4 py-2 cursor-pointer group" onClick={onLogoClick}>
-          <span className="text-3xl font-bold text-purple-600 group-hover:text-purple-700 transition-colors duration-200">
+      <div className="max-w-6xl mx-auto px-3 py-2 flex justify-between items-center">
+        <div className="text-gray-900 px-2 py-1 cursor-pointer group" onClick={onLogoClick}>
+          <span className="text-2xl font-bold text-purple-600 group-hover:text-purple-700 transition-colors duration-200">
             QuizzDrop
           </span>
         </div>
         
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
           <button
             onClick={() => setShowHelp(true)}
-            className="text-purple-600 hover:text-purple-700 p-2 rounded-lg hover:bg-purple-50 transition-colors duration-200"
+            className="text-purple-600 hover:text-purple-700 p-1.5 rounded-lg hover:bg-purple-50 transition-colors duration-200"
             aria-label="Help"
             title="How to use QuizzDrop"
           >
-            <HelpCircle className="w-8 h-8" />
+            <HelpCircle className="w-6 h-6" />
           </button>
 
           <a 
@@ -40,20 +40,20 @@ export default function Navbar({ onLogoClick }: NavbarProps) {
             rel="noopener noreferrer"
             aria-label="GitHub Repository"
             title="View Source Code"
-            className="text-purple-600 hover:text-purple-700 p-2 rounded-lg hover:bg-purple-50 transition-colors duration-200"
+            className="text-purple-600 hover:text-purple-700 p-1.5 rounded-lg hover:bg-purple-50 transition-colors duration-200"
           >
-            <FaGithub className="w-8 h-8" />
+            <FaGithub className="w-6 h-6" />
           </a>
           
           {isSignedIn ? (
-            <div className="flex items-center gap-3">
-              <span className="text-sm text-gray-600 hidden sm:block">
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-gray-600 hidden sm:block">
                 Welcome, {user?.firstName || 'User'}!
               </span>
               <UserButton 
                 appearance={{
                   elements: {
-                    avatarBox: 'w-10 h-10',
+                    avatarBox: 'w-8 h-8',
                     userButtonPopoverCard: 'shadow-lg border border-gray-200',
                     userButtonPopoverActionButton: 'hover:bg-purple-50',
                     userButtonPopoverActionButtonText: 'text-gray-700',
@@ -63,14 +63,14 @@ export default function Navbar({ onLogoClick }: NavbarProps) {
               />
             </div>
           ) : (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
               <SignInButton mode="modal">
-                <button className="px-4 py-2 text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-lg transition-colors duration-200 text-sm font-medium">
+                <button className="px-3 py-1.5 text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-lg transition-colors duration-200 text-xs font-medium">
                   Sign In
                 </button>
               </SignInButton>
               <SignUpButton mode="modal">
-                <button className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors duration-200 text-sm font-medium">
+                <button className="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors duration-200 text-xs font-medium">
                   Sign Up
                 </button>
               </SignUpButton>
