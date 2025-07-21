@@ -40,7 +40,7 @@ export default function Home() {
     const textBasedQuestions = Math.floor(textLength / 1200);
     const pageBasedQuestions = Math.ceil(pageCount * 2.5);
     const suggested = Math.max(textBasedQuestions, pageBasedQuestions);
-    return Math.min(Math.max(suggested, 5), 50);
+    return Math.min(Math.max(suggested, 5), 15);
   };
 
   const showErrorToast = () => {
@@ -392,7 +392,7 @@ export default function Home() {
                     id="questionCount"
                     type="range"
                     min="5"
-                    max="50"
+                    max="15"
                     value={questionCount}
                     onChange={(e) => setQuestionCount(parseInt(e.target.value))}
                     className="flex-1 h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
@@ -401,9 +401,9 @@ export default function Home() {
                   <input
                     type="number"
                     min="5"
-                    max="50"
+                    max="15"
                     value={questionCount}
-                    onChange={(e) => setQuestionCount(Math.min(Math.max(parseInt(e.target.value) || 5, 5), 50))}
+                    onChange={(e) => setQuestionCount(Math.min(Math.max(parseInt(e.target.value) || 5, 5), 15))}
                     className="w-12 px-1 py-1 text-center border border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 bg-white text-xs"
                     onClick={(e) => e.stopPropagation()}
                     title="Number of questions"
