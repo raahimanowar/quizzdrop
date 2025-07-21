@@ -236,16 +236,16 @@ RESPONSE REQUIREMENTS:
         throw new Error('No valid questions generated');
       }
 
-      // Successfully generated quiz - now increment rate limit
+      const finalQuestions = validQuestions.slice(0, numberOfQuestions);
+
       incrementRateLimit(userId);
       
-      // Recalculate remaining count after increment
       const updatedRateLimit = checkRateLimit(userId);
 
       return NextResponse.json(
         { 
-          questions: validQuestions,
-          totalGenerated: validQuestions.length
+          questions: finalQuestions,
+          totalGenerated: finalQuestions.length
         },
         { 
           headers: {
